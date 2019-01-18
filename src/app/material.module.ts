@@ -12,6 +12,7 @@ import {
   MatTabsModule,
   MatCardModule,
   MatSelectModule,
+  MatProgressSpinnerModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core'
 
@@ -29,6 +30,7 @@ const materialModules = [
   MatTabsModule,
   MatCardModule,
   MatSelectModule,
+  MatProgressSpinnerModule,
 ]
 
 @NgModule({
