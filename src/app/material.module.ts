@@ -9,6 +9,9 @@ import {
   MatSidenavModule,
   MatToolbarModule,
   MatListModule,
+  MatTabsModule,
+  MatCardModule,
+  MatSelectModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core'
 
@@ -23,6 +26,9 @@ const materialModules = [
   MatSidenavModule,
   MatToolbarModule,
   MatListModule,
+  MatTabsModule,
+  MatCardModule,
+  MatSelectModule,
 ]
 
 @NgModule({
