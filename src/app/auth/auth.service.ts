@@ -43,7 +43,8 @@ export class AuthService {
     }
 
     isAuth() {
-        return this.user !== null
+        // why does !== doesn't work?
+        return this.user != null
     }
 
     private authSuccessfuly() {
