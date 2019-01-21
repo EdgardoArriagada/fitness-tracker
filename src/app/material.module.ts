@@ -14,6 +14,7 @@ import {
   MatSelectModule,
   MatProgressSpinnerModule,
   MatDialogModule,
+  MatTableModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core'
 
@@ -33,6 +34,7 @@ const materialModules = [
   MatSelectModule,
   MatProgressSpinnerModule,
   MatDialogModule,
+  MatTableModule,
 ]
 
 @NgModule({
