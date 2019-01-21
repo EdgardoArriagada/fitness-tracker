@@ -15,6 +15,7 @@ import {
   MatProgressSpinnerModule,
   MatDialogModule,
   MatTableModule,
+  MatSortModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core'
 
@@ -35,6 +36,7 @@ const materialModules = [
   MatProgressSpinnerModule,
   MatDialogModule,
   MatTableModule,
+  MatSortModule,
 ]
 
 @NgModule({
