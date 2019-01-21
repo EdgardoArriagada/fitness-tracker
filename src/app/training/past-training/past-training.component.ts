@@ -23,4 +23,15 @@ export class PastTrainingComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.sort = this.sort
   }
+
+  doFilter(filterValue: string) {
+    /* 
+      It have to be trimmed and toLowerCase because
+      in MatTableDataSource, each row are stored 
+      in a single string concatenating, trimming and
+      lowercasing each rows's column values 
+    */
+    this.dataSource.filter = filterValue.trim().toLowerCase()
+  }
+
 }
