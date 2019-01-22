@@ -3,52 +3,63 @@ import { User } from './user.model';
 import { AuthDAta } from './auth-data.model';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { TrainingService } from '../training/training.service';
 
 @Injectable()
 export class AuthService {
 
     // Subject (ts -> ts) is like an EventEmitter (ts -> html)
     public AuthChange = new Subject<boolean>()
-    private user: User
+    private isAuthenticated = false
 
-    constructor(private router: Router) {
+    constructor(
+        private router: Router,
+        private afAuth: AngularFireAuth,
+        private trainingService: TrainingService
+    ) {
 
     }
 
     registerUser(authData: AuthDAta) {
-        this.user = {
-            email: authData.email,
-            userId: Math.round(Math.random() * 10000).toString()
-        }
-        this.authSuccessfuly()
+        this.afAuth.auth.createUserWithEmailAndPassword(
+            authData.email,
+            authData.password,
+        )
+        .then(result => {
+            console.log(result)
+            this.authSuccessfuly()
+        })
+        .catch(error => console.log(error))
     }
 
     login(authData: AuthDAta) {
-        this.user = {
-            email: authData.email,
-            userId: Math.round(Math.random() * 10000).toString()
-        }
-        this.authSuccessfuly()
+        this.afAuth.auth.signInWithEmailAndPassword(
+            authData.email,
+            authData.password,
+        )
+        .then(result => {
+            console.log(result)
+            this.authSuccessfuly()
+        })
+        .catch(error => console.log(error))
     }
 
-    logout() {
-        this.user = null
+    logout(): void {
+        this.trainingService.cancelSubscriptions()
+        this.afAuth.auth.signOut()
         this.AuthChange.next(false)
+        this.isAuthenticated = false
         this.router.navigate(['/login'])
-
     }
 
-    getUser() {
-        return { ...this.user }
-    }
-
-    isAuth() {
-        // why does !== doesn't work?
-        return this.user != null
+    isAuth(): boolean {
+        return this.isAuthenticated
     }
 
     private authSuccessfuly() {
         // .next is like the .emit of the eventEmitter
+        this.isAuthenticated = true
         this.AuthChange.next(true)
         this.router.navigate(['/training'])
     }
