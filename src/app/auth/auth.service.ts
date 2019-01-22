@@ -17,8 +17,22 @@ export class AuthService {
         private router: Router,
         private afAuth: AngularFireAuth,
         private trainingService: TrainingService
-    ) {
+    ) { }
 
+    public initAuthListener() {
+        this.afAuth.authState.subscribe(user => {
+            if (user) {
+                // .next is like the .emit of the eventEmitter
+                this.isAuthenticated = true
+                this.AuthChange.next(true)
+                this.router.navigate(['/training'])
+            } else {
+                this.trainingService.cancelSubscriptions()
+                this.AuthChange.next(false)
+                this.isAuthenticated = false
+                this.router.navigate(['/login'])
+            }
+        })
     }
 
     registerUser(authData: AuthDAta) {
@@ -26,11 +40,10 @@ export class AuthService {
             authData.email,
             authData.password,
         )
-        .then(result => {
-            console.log(result)
-            this.authSuccessfuly()
-        })
-        .catch(error => console.log(error))
+            .then(result => {
+                console.log(result)
+            })
+            .catch(error => console.log(error))
     }
 
     login(authData: AuthDAta) {
@@ -38,29 +51,17 @@ export class AuthService {
             authData.email,
             authData.password,
         )
-        .then(result => {
-            console.log(result)
-            this.authSuccessfuly()
-        })
-        .catch(error => console.log(error))
+            .then(result => {
+                console.log(result)
+            })
+            .catch(error => console.log(error))
     }
 
     logout(): void {
-        this.trainingService.cancelSubscriptions()
         this.afAuth.auth.signOut()
-        this.AuthChange.next(false)
-        this.isAuthenticated = false
-        this.router.navigate(['/login'])
     }
 
     isAuth(): boolean {
         return this.isAuthenticated
-    }
-
-    private authSuccessfuly() {
-        // .next is like the .emit of the eventEmitter
-        this.isAuthenticated = true
-        this.AuthChange.next(true)
-        this.router.navigate(['/training'])
     }
 }
