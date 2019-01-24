@@ -32,8 +32,8 @@ import * as fromApp from './app.reducer';
     FlexLayoutModule,
     AngularFireModule.initializeApp(environment.firebase),
     AuthModule,
-    AngularFirestoreModule,
-    StoreModule.forFeature('app', fromApp.reducer), // imported for the lazy loaded TrainingModule
+    AngularFirestoreModule, // imported for the lazy loaded TrainingModule
+    StoreModule.forFeature('app', fromApp.reducer),
   ],
   providers: [AuthService],
   bootstrap: [AppComponent],
