@@ -5,6 +5,7 @@ import { LoginComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
 import { MyOwnCustomMaterialModule } from '../material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FormsModule,
     MyOwnCustomMaterialModule,
     FlexLayoutModule,
+    AngularFireAuthModule,
   ]
 })
 export class AuthModule { }
