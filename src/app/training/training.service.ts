@@ -4,6 +4,9 @@ import { Exercise } from './exercise.model';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators'
 import { UIService } from '../shared/ui.service';
+import { Store } from '@ngrx/store';
+import * as fromRoot from '../app.reducer'
+import * as UI from '../shared/ui.actions'
 
 @Injectable({
   providedIn: 'root'
@@ -23,10 +26,11 @@ export class TrainingService {
   constructor(
     private db: AngularFirestore,
     private uiService: UIService,
+    private store: Store<fromRoot.State>,
   ) { }
 
   fetchAvailibleExercises() {
-    this.uiService.loadingStateChanged.next(true)
+    this.store.dispatch(new UI.StartLoading)
     this.fbSubscriptions.push(
       this.db
         .collection('availibleExercises')
@@ -46,7 +50,8 @@ export class TrainingService {
           (exercices: Exercise[]) => {
             this.availibleExercise = exercices
             this.exercisesChanged.next([...this.availibleExercise])
-            this.uiService.loadingStateChanged.next(false)
+            this.store.dispatch(new UI.StopLoading)
+
           },
           error => {
             this.uiService.showSnackBar(
@@ -55,7 +60,7 @@ export class TrainingService {
               3000
             )
             this.exercisesChanged.next(null)
-            this.uiService.loadingStateChanged.next(false)
+            this.store.dispatch(new UI.StopLoading)
           }
         )
     )
@@ -95,13 +100,18 @@ export class TrainingService {
   }
 
   fetchCompletedOrCancelledExercises() {
+    this.store.dispatch(new UI.StartLoading)
     this.fbSubscriptions.push(
       this.db
         .collection('finishedExercises')
         .valueChanges()
-        .subscribe((finishedExercises: Exercise[]) => {
-          this.finishedExercisesChanged.next(finishedExercises)
-        })
+        .subscribe(
+          (finishedExercises: Exercise[]) => {
+            this.finishedExercisesChanged.next(finishedExercises)
+            this.store.dispatch(new UI.StopLoading)
+          },
+          error => this.store.dispatch(new UI.StopLoading),
+        )
     )
   }
 

@@ -27,7 +27,6 @@ export class AuthService {
     public initAuthListener() {
         this.afAuth.authState.subscribe(user => {
             if (user) {
-                // .next is like the .emit of the eventEmitter
                 this.isAuthenticated = true
                 this.AuthChange.next(true)
                 this.router.navigate(['/training'])
@@ -41,7 +40,6 @@ export class AuthService {
     }
 
     registerUser(authData: AuthDAta) {
-        // this.uiService.loadingStateChanged.next(true)
         this.store.dispatch(new UI.StartLoading)
         this.afAuth.auth.createUserWithEmailAndPassword(
             authData.email,
@@ -54,13 +52,11 @@ export class AuthService {
             this.uiService.showSnackBar(error.message, null, 3000)
         })
         .finally(() => {
-            // this.uiService.loadingStateChanged.next(false)
             this.store.dispatch(new UI.StopLoading)
         })
     }
 
     login(authData: AuthDAta) {
-        // this.uiService.loadingStateChanged.next(true)
         this.store.dispatch(new UI.StartLoading)
         this.afAuth.auth.signInWithEmailAndPassword(
             authData.email,
@@ -73,7 +69,6 @@ export class AuthService {
             this.uiService.showSnackBar(error.message, null, 3000)
         })
         .finally(() => {
-            // this.uiService.loadingStateChanged.next(false)
             this.store.dispatch(new UI.StopLoading)
         })
     }
