@@ -8,7 +8,7 @@ const lazyLoadingTrainingModuleString = './training/training.module#TrainingModu
 
 const routes: Routes = [
   { path: '', component: WelcomeComponent },
-  { path: 'training', loadChildren: lazyLoadingTrainingModuleString },
+  { path: 'training', loadChildren: lazyLoadingTrainingModuleString, canLoad: [AuthGuard] },
 ]
 
 @NgModule({
