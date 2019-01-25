@@ -8,6 +8,7 @@ import { UIService } from '../shared/ui.service';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../app.reducer'
 import * as UI from '../shared/ui.actions'
+import * as Auth from 'src/app/auth/auth.actions'
 
 @Injectable()
 export class AuthService {
@@ -27,13 +28,11 @@ export class AuthService {
     public initAuthListener() {
         this.afAuth.authState.subscribe(user => {
             if (user) {
-                this.isAuthenticated = true
-                this.AuthChange.next(true)
+                this.store.dispatch(new Auth.SetAuthenticated)
                 this.router.navigate(['/training'])
             } else {
                 this.trainingService.cancelSubscriptions()
-                this.AuthChange.next(false)
-                this.isAuthenticated = false
+                this.store.dispatch(new Auth.SetUnauthenticated)
                 this.router.navigate(['/login'])
             }
         })
@@ -75,9 +74,5 @@ export class AuthService {
 
     logout(): void {
         this.afAuth.auth.signOut()
-    }
-
-    isAuth(): boolean {
-        return this.isAuthenticated
     }
 }
