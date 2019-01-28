@@ -1,4 +1,4 @@
-import { Action, createFeatureSelector, createSelector } from '@ngrx/store';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { Exercise } from './exercise.model';
 import * as fromRoot from 'src/app/app.reducer'
 import { TrainingActions, SET_AVAILIBLE_TRAININGS, SET_FINISHED_TRAININGS, START_TRAINING, STOP_TRAINING } from './training.actions';
@@ -52,4 +52,5 @@ export const getTrainingState = createFeatureSelector<TrainingState>('training')
 export const getAvailibleExercises = createSelector(getTrainingState, (state: TrainingState) => state.availibleExercises)
 export const getAvailibleFinishedExercises = createSelector(getTrainingState, (state: TrainingState) => state.finishedExercises)
 export const getActiveTraining = createSelector(getTrainingState, (state: TrainingState) => state.activeTraining)
+export const getIsTraining = createSelector(getTrainingState, (state: TrainingState) => state.activeTraining != null) // '!=' instead of '!=='because the 1st one also covers 'undefinded'
 
