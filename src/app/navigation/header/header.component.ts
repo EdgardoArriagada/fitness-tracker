@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { Subscription, Observable } from 'rxjs'
+import { Observable } from 'rxjs'
 import { AuthService } from 'src/app/auth/auth.service';
 import * as fromRoot from 'src/app/app.reducer'
 import { Store } from '@ngrx/store';
@@ -13,7 +13,6 @@ export class HeaderComponent implements OnInit {
 
   @Output() menuToggle = new EventEmitter()
   isAuth$: Observable<boolean>
-  authSubscription: Subscription
 
   constructor(
     private authService: AuthService,

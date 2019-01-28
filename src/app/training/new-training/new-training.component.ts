@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy, } from '@angular/core';
+import { Component, OnInit, } from '@angular/core';
 import { TrainingService } from '../training.service';
 import { Exercise } from '../exercise.model';
 import { NgForm } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { UIService } from 'src/app/shared/ui.service';
 import { Store } from '@ngrx/store';
 import * as fromTraining from 'src/app/training/training.reducer'
 // fromRoot imported just for teh right completion
@@ -22,8 +21,7 @@ export class NewTrainingComponent implements OnInit {
 
   constructor(
     private trainingService: TrainingService,
-    private uiService: UIService,
-    private store: Store<fromTraining.State>
+    private store: Store<fromTraining.State>,
   ) { }
 
   ngOnInit() {

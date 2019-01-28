@@ -13,7 +13,6 @@ export class TrainingComponent implements OnInit {
   ongoingTraining$: Observable<boolean>
 
   constructor(
-    private trainingService: TrainingService,
     private store: Store<fromTraining.State>,
   ) { }
 

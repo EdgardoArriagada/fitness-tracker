@@ -14,14 +14,6 @@ import * as Training from 'src/app/training/training.actions'
 })
 export class TrainingService {
 
-  public exerciseChanged = new Subject<Exercise>()
-  public exercisesChanged = new Subject<Exercise[]>()
-
-  public finishedExercisesChanged = new Subject<Exercise[]>()
-
-  private availibleExercise: Exercise[] = []
-
-  private runningExercise: Exercise
   private fbSubscriptions: Subscription[] = []
 
   constructor(
@@ -58,7 +50,6 @@ export class TrainingService {
               null,
               3000
             )
-            this.exercisesChanged.next(null)
             this.store.dispatch(new UI.StopLoading())
           }
         )
@@ -83,7 +74,7 @@ export class TrainingService {
         duration: activeExercise.duration * (progressMade / 100),
         calories: activeExercise.calories * (progressMade / 100),
         date: new Date(),
-        state: 'completed'
+        state: 'cancelled'
       })
       this.store.dispatch(new Training.StopTraining())
     })
