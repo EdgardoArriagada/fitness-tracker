@@ -1,4 +1,4 @@
-import { Subject, Subscription } from 'rxjs'
+import { Subscription } from 'rxjs'
 import { Injectable } from '@angular/core';
 import { Exercise } from './exercise.model';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -24,40 +24,39 @@ export class TrainingService {
 
   fetchAvailibleExercises() {
     this.store.dispatch(new UI.StartLoading)
-    this.fbSubscriptions.push(
-      this.db
-        .collection('availibleExercises')
-        .snapshotChanges().pipe(
-          map(docArray => {
-            return docArray.map(doc => {
-              return {
-                id: doc.payload.doc.id,
-                name: doc.payload.doc.data()['name'],
-                duration: doc.payload.doc.data()['duration'],
-                calories: doc.payload.doc.data()['calories'],
-              }
-            })
+    this.db
+      .collection('availibleExercises')
+      // snapshotChanges gets metadata, like ID
+      .snapshotChanges().pipe(take(1),
+        map(docArray => {
+          return docArray.map(doc => {
+            return {
+              id: doc.payload.doc.id,
+              name: doc.payload.doc.data()['name'],
+              duration: doc.payload.doc.data()['duration'],
+              calories: doc.payload.doc.data()['calories'],
+            }
           })
-        )
-        .subscribe(
-          (exercices: Exercise[]) => {
-            this.store.dispatch(new Training.SetAvailibleTrainings(exercices))
-            this.store.dispatch(new UI.StopLoading())
-          },
-          error => {
-            this.uiService.showSnackBar(
-              'Fetching Exercises failed, please try again later',
-              null,
-              3000
-            )
-            this.store.dispatch(new UI.StopLoading())
-          }
-        )
-    )
+        })
+      )
+      .subscribe(
+        (exercices: Exercise[]) => {
+          this.store.dispatch(new Training.SetAvailibleTrainings(exercices))
+          this.store.dispatch(new UI.StopLoading())
+        },
+        error => {
+          this.uiService.showSnackBar(
+            'Fetching Exercises failed, please try again later',
+            null,
+            3000
+          )
+          this.store.dispatch(new UI.StopLoading())
+        }
+      )
   }
 
   completeExercise() {
-    this.store.select(fromTraining.getActiveTraining).subscribe(activeExercise => {
+    this.store.select(fromTraining.getActiveTraining).pipe(take(1)).subscribe(activeExercise => {
       this.addDataToDatabase({
         ...activeExercise,
         date: new Date(),
