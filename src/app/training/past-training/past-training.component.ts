@@ -1,27 +1,30 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Exercise } from '../exercise.model';
 import { TrainingService } from '../training.service';
-import { Subscription } from 'rxjs';
+import * as fromTraining from 'src/app/training/training.reducer'
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-past-training',
   templateUrl: './past-training.component.html',
   styleUrls: ['./past-training.component.scss']
 })
-export class PastTrainingComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PastTrainingComponent implements OnInit, AfterViewInit {
 
   public displayedColumns = ['date', 'name', 'duration', 'calories', 'state']
   public dataSource = new MatTableDataSource<Exercise>()
-  private finishedExercisesChangedSubscription: Subscription
 
   @ViewChild(MatSort) sort: MatSort
   @ViewChild(MatPaginator) paginator: MatPaginator
 
-  constructor(private trainingService: TrainingService) { }
+  constructor(
+    private trainingService: TrainingService,
+    private store: Store<fromTraining.State>
+  ) { }
 
   ngOnInit() {
-    this.finishedExercisesChangedSubscription = this.trainingService.finishedExercisesChanged
+    this.store.select(fromTraining.getAvailibleFinishedExercises)
     .subscribe((finishedExercises: Exercise[]) => {
       this.dataSource.data = finishedExercises
     })
@@ -41,11 +44,4 @@ export class PastTrainingComponent implements OnInit, AfterViewInit, OnDestroy {
     */
     this.dataSource.filter = filterValue.trim().toLowerCase()
   }
-
-  ngOnDestroy() {
-    if (this.finishedExercisesChangedSubscription) {
-      this.finishedExercisesChangedSubscription.unsubscribe()
-    }
-  }
-
 }

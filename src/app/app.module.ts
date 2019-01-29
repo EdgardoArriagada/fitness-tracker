@@ -14,6 +14,8 @@ import { AuthService } from './auth/auth.service';
 import { environment } from 'src/environments/environment';
 import { AuthModule } from './auth/auth.module';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { StoreModule } from '@ngrx/store';
+import { reducers } from './app.reducer'
 
 @NgModule({
   declarations: [
@@ -31,6 +33,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     AngularFireModule.initializeApp(environment.firebase),
     AuthModule,
     AngularFirestoreModule, // imported for the lazy loaded TrainingModule
+    StoreModule.forRoot(reducers),
   ],
   providers: [AuthService],
   bootstrap: [AppComponent],
