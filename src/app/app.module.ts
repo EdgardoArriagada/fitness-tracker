@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout'
 import { AngularFireModule } from '@angular/fire';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -34,6 +35,7 @@ import { reducers } from './app.reducer'
     AuthModule,
     AngularFirestoreModule, // imported for the lazy loaded TrainingModule
     StoreModule.forRoot(reducers),
+    !environment.production ? StoreDevtoolsModule.instrument() : []
   ],
   providers: [AuthService],
   bootstrap: [AppComponent],
