@@ -6,6 +6,7 @@ import { map, take } from 'rxjs/operators'
 import { UIService } from '../shared/ui.service';
 import { Store } from '@ngrx/store';
 import * as fromTraining from 'src/app/training/training.reducer'
+import * as fromRoot from 'src/app/app.reducer'
 import * as UI from '../shared/ui.actions'
 import * as Training from 'src/app/training/training.actions'
 
@@ -87,7 +88,7 @@ export class TrainingService {
     this.store.dispatch(new UI.StartLoading())
     this.fbSubscriptions.push(
       this.db
-        .collection('finishedExercises')
+        .collection('users').doc(this.getUid()).collection('finishedExercises')
         .valueChanges()
         .subscribe(
           (finishedExercises: Exercise[]) => {
@@ -104,7 +105,14 @@ export class TrainingService {
   }
 
   private addDataToDatabase(exercise: Exercise) {
-    this.db.collection('finishedExercises').add(exercise)
+    this.db.collection('users').doc(this.getUid()).collection('finishedExercises').add(exercise)
+  }
+
+  private getUid() {
+    let userID
+    this.store.select(fromRoot.getUserID).pipe(take(1))
+    .subscribe(uid => userID = uid)
+    return userID
   }
 
 }
