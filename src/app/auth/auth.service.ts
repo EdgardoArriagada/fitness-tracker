@@ -14,8 +14,6 @@ import * as Auth from 'src/app/auth/auth.actions'
 export class AuthService {
 
     // Subject (ts -> ts) is like an EventEmitter (ts -> html)
-    public AuthChange = new Subject<boolean>()
-    private isAuthenticated = false
 
     constructor(
         private router: Router,
