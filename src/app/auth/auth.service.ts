@@ -43,22 +43,21 @@ export class AuthService {
 
     private sendEmailVerification(): void {
         this.afAuth.auth.currentUser.sendEmailVerification()
-            .then(function () {
-                this.uiService.showSnackBar('An email have been seen to your inbox', null, 3000)
+            .then(async () => {
+                await this.uiService.showSnackBar('An email have been sent to your inbox', null, 3000)
             })
-            .catch(function (error) {
-                this.uiService.showSnackBar(error.message, null, 3000)
+            .catch(async (error) => {
+                await this.uiService.showSnackBar(error.message, null, 3000)
             });
     }
 
-    public registerUserAndSendEmail(authData: AuthDAta) {
+    public registerUserAndSendEmail(authData: AuthDAta): void {
         this.store.dispatch(new UI.StartLoading)
         this.afAuth.auth.createUserWithEmailAndPassword(
             authData.email,
             authData.password,
         )
-            .then(result => {
-                console.log(result)
+            .then(() => {
                 this.sendEmailVerification()
             })
             .catch(error => {
@@ -69,7 +68,7 @@ export class AuthService {
             })
     }
 
-    login(authData: AuthDAta) {
+    public login(authData: AuthDAta) {
         this.store.dispatch(new UI.StartLoading)
         this.afAuth.auth.signInWithEmailAndPassword(
             authData.email,
@@ -78,6 +77,7 @@ export class AuthService {
             .then(result => {
                 if (!result.user!.emailVerified) {
                     this.uiService.showSnackBar('Please verify your email first before login', null, 3000)
+                    this.logout()
                 }
             })
             .catch(error => {
@@ -88,7 +88,7 @@ export class AuthService {
             })
     }
 
-    logout(): void {
+    public logout(): void {
         this.afAuth.auth.signOut()
     }
 }

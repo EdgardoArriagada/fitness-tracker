@@ -22,8 +22,8 @@ export function reducer(state = initialState, action: AuthActions): State {
      }
     case SET_UNAUTHENTICATED:
      return {
+       ...state,
        userID: null,
-       userEmail: null,
      }
     case SET_EMAIL:
      return {

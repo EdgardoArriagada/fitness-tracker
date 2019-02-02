@@ -1,28 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from '../auth.service';
-import { UIService } from 'src/app/shared/ui.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../../app.reducer'
+import { AuthDAta } from '../auth-data.model';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
+  private subs: Subscription[] = []
   public isLoading$: Observable<boolean>
+  public userEmail: AuthDAta['email']
 
   constructor(
     private authService: AuthService,
-    private uiService: UIService,
-    private store: Store<fromRoot.State>
+    private store: Store<fromRoot.State>,
   ) { }
 
   ngOnInit() {
     this.isLoading$ = this.store.select(fromRoot.getIsLoading)
+    this.subs.push(
+      this.store.select(fromRoot.getUserEmail).subscribe(
+      userEmail => {
+        this.userEmail = userEmail
+      })
+    )
   }
 
   onSubmit(form: NgForm) {
@@ -30,6 +37,10 @@ export class LoginComponent implements OnInit {
       email: form!.value!.email,
       password: form!.value!.password,
     })
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(sub => sub.unsubscribe())
   }
 
 }
