@@ -29,7 +29,7 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit(form: NgForm) {
-    this.authService.registerUser({
+    this.authService.registerUserAndSendEmail({
       email: form!.value!.email,
       password: form!.value!.password,
     })
