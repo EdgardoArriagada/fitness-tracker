@@ -24,15 +24,9 @@ export class AuthService {
 
     public initAuthListener() {
         this.afAuth.authState.subscribe(user => {
-            if (user) {
-                if (user.emailVerified) {
-                    this.store.dispatch(new Auth.SetAuthenticated(user.uid, user.email))
-                    this.router.navigate(['/training'])
-                } else {
-                    // save the email so we can get it on login component
-                    this.store.dispatch(new Auth.SetEmail(user.email))
-                    this.router.navigate(['/login'])
-                }
+            if (user && user.emailVerified) {
+                this.store.dispatch(new Auth.SetAuthenticated(user.uid, user.email))
+                this.router.navigate(['/training'])
             } else {
                 this.trainingService.cancelSubscriptions()
                 this.store.dispatch(new Auth.SetUnauthenticated)
