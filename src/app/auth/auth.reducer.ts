@@ -1,11 +1,10 @@
-import { Action } from '@ngrx/store';
 import { AuthActions, SET_AUTHENTICATED, SET_UNAUTHENTICATED, SET_EMAIL } from './auth.actions';
-import { AuthDAta } from './auth-data.model';
+import { AuthData } from './auth-data.model';
 
 
 export interface State {
   userID: any,
-  userEmail: AuthDAta['email'],
+  userEmail: AuthData['email'],
 }
 
 export const initialState: State = {

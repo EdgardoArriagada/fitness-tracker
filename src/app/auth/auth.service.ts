@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs'
-import { AuthDAta } from './auth-data.model';
+import { AuthData } from './auth-data.model';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -24,15 +24,9 @@ export class AuthService {
 
     public initAuthListener() {
         this.afAuth.authState.subscribe(user => {
-            if (user) {
-                if (user.emailVerified) {
-                    this.store.dispatch(new Auth.SetAuthenticated(user.uid, user.email))
-                    this.router.navigate(['/training'])
-                } else {
-                    // save the email so we can get it on login component
-                    this.store.dispatch(new Auth.SetEmail(user.email))
-                    this.router.navigate(['/login'])
-                }
+            if (user && user.emailVerified) {
+                this.store.dispatch(new Auth.SetAuthenticated(user.uid, user.email))
+                this.router.navigate(['/training'])
             } else {
                 this.trainingService.cancelSubscriptions()
                 this.store.dispatch(new Auth.SetUnauthenticated)
@@ -41,41 +35,49 @@ export class AuthService {
         })
     }
 
-    private sendEmailVerification(): void {
+    private sendEmailVerification(email: AuthData['email']): void {
         this.afAuth.auth.currentUser.sendEmailVerification()
             .then(async () => {
                 await this.uiService.showSnackBar('An email have been sent to your inbox', null, 3000)
+                // save the email so we can get it on login component
+                this.store.dispatch(new Auth.SetEmail(email))
             })
             .catch(async (error) => {
                 await this.uiService.showSnackBar(error.message, null, 3000)
-            });
+            })
     }
 
-    public registerUserAndSendEmail(authData: AuthDAta): void {
+    public registerUserAndSendEmail(AuthData: AuthData): void {
         this.store.dispatch(new UI.StartLoading)
         this.afAuth.auth.createUserWithEmailAndPassword(
-            authData.email,
-            authData.password,
+            AuthData.email,
+            AuthData.password,
         )
             .then(() => {
-                this.sendEmailVerification()
+                this.sendEmailVerification(AuthData.email)
             })
             .catch(error => {
                 this.uiService.showSnackBar(error.message, null, 3000)
             })
             .finally(() => {
                 this.store.dispatch(new UI.StopLoading)
+                // this method log the user in
+                // and the app only enable users
+                // with email verified to log in
+                // so we have to log the user out
+                this.logout()
             })
     }
 
-    public login(authData: AuthDAta) {
+    public login(AuthData: AuthData) {
         this.store.dispatch(new UI.StartLoading)
         this.afAuth.auth.signInWithEmailAndPassword(
-            authData.email,
-            authData.password,
+            AuthData.email,
+            AuthData.password,
         )
             .then(result => {
-                if (!result.user!.emailVerified) {
+                // the app only enable users with emailVerified to log in
+                if (result.user && !result.user.emailVerified) {
                     this.uiService.showSnackBar('Please verify your email first before login', null, 3000)
                     this.logout()
                 }
