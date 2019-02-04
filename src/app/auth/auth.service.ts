@@ -12,10 +12,7 @@ import * as Auth from 'src/app/auth/auth.actions'
 
 @Injectable()
 export class AuthService {
-
     // Subject (ts -> ts) is like an EventEmitter (ts -> html)
-    public AuthChange = new Subject<boolean>()
-    private isAuthenticated = false
 
     constructor(
         private router: Router,
@@ -28,8 +25,14 @@ export class AuthService {
     public initAuthListener() {
         this.afAuth.authState.subscribe(user => {
             if (user) {
-                this.store.dispatch(new Auth.SetAuthenticated(user.uid))
-                this.router.navigate(['/training'])
+                if (user.emailVerified) {
+                    this.store.dispatch(new Auth.SetAuthenticated(user.uid, user.email))
+                    this.router.navigate(['/training'])
+                } else {
+                    // save the email so we can get it on login component
+                    this.store.dispatch(new Auth.SetEmail(user.email))
+                    this.router.navigate(['/login'])
+                }
             } else {
                 this.trainingService.cancelSubscriptions()
                 this.store.dispatch(new Auth.SetUnauthenticated)
@@ -38,41 +41,54 @@ export class AuthService {
         })
     }
 
-    registerUser(authData: AuthDAta) {
+    private sendEmailVerification(): void {
+        this.afAuth.auth.currentUser.sendEmailVerification()
+            .then(async () => {
+                await this.uiService.showSnackBar('An email have been sent to your inbox', null, 3000)
+            })
+            .catch(async (error) => {
+                await this.uiService.showSnackBar(error.message, null, 3000)
+            });
+    }
+
+    public registerUserAndSendEmail(authData: AuthDAta): void {
         this.store.dispatch(new UI.StartLoading)
         this.afAuth.auth.createUserWithEmailAndPassword(
             authData.email,
             authData.password,
         )
-        .then(result => {
-            console.log(result)
-        })
-        .catch(error => {
-            this.uiService.showSnackBar(error.message, null, 3000)
-        })
-        .finally(() => {
-            this.store.dispatch(new UI.StopLoading)
-        })
+            .then(() => {
+                this.sendEmailVerification()
+            })
+            .catch(error => {
+                this.uiService.showSnackBar(error.message, null, 3000)
+            })
+            .finally(() => {
+                this.store.dispatch(new UI.StopLoading)
+            })
     }
 
-    login(authData: AuthDAta) {
+    public login(authData: AuthDAta) {
         this.store.dispatch(new UI.StartLoading)
         this.afAuth.auth.signInWithEmailAndPassword(
             authData.email,
             authData.password,
         )
-        .then(result => {
-            console.log(result)
-        })
-        .catch(error => {
-            this.uiService.showSnackBar(error.message, null, 3000)
-        })
-        .finally(() => {
-            this.store.dispatch(new UI.StopLoading)
-        })
+            .then(result => {
+                if (!result.user!.emailVerified) {
+                    this.uiService.showSnackBar('Please verify your email first before login', null, 3000)
+                    this.logout()
+                }
+            })
+            .catch(error => {
+                this.uiService.showSnackBar(error.message, null, 3000)
+            })
+            .finally(() => {
+                this.store.dispatch(new UI.StopLoading)
+            })
     }
 
-    logout(): void {
+    public logout(): void {
         this.afAuth.auth.signOut()
     }
 }
