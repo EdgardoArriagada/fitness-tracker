@@ -4,7 +4,7 @@ import { AuthService } from '../auth.service';
 import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../../app.reducer'
-import { AuthDAta } from '../auth-data.model';
+import { AuthData } from '../auth-data.model';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private subs: Subscription[] = []
   public isLoading$: Observable<boolean>
-  public userEmail: AuthDAta['email']
+  public userEmail: AuthData['email']
 
   constructor(
     private authService: AuthService,

@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { AuthDAta } from './auth-data.model';
+import { AuthData } from './auth-data.model';
 
 export const SET_AUTHENTICATED = '[Auth] SET_AUTHENTICATED'
 export const SET_UNAUTHENTICATED = '[Auth] SET_UNAUTHENTICATED'
@@ -9,7 +9,7 @@ export class SetAuthenticated implements Action {
   readonly type = SET_AUTHENTICATED;
   constructor(
     public userID: string,
-    public userEmail: AuthDAta['email'],
+    public userEmail: AuthData['email'],
   ) { }
 }
 
@@ -20,7 +20,7 @@ export class SetUnauthenticated implements Action {
 export class SetEmail implements Action {
   readonly type = SET_EMAIL;
   constructor(
-    public userEmail: AuthDAta['email'],
+    public userEmail: AuthData['email'],
   ) { }
 }
 
